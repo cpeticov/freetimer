@@ -287,9 +287,6 @@
             presetsContainer.style.opacity = '0.3'; 
             presetsContainer.style.pointerEvents = 'none';
 
-            // Truque de usabilidade: força o carregamento do áudio após o clique do usuário
-            alarmSound.load(); 
-
             countdown = setInterval(() => {
                 if (totalSeconds <= 0) {
                     clearInterval(countdown);
