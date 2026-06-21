@@ -252,27 +252,38 @@
             display.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
-        function startTimer() {
+       function startTimer() {
             if (isRunning) return;
             isRunning = true;
             btnStart.style.display = 'none';
             btnPause.style.display = 'inline-block';
-            presetsContainer.style.opacity = '0.3'; // Visually disable presets during countdown
+            presetsContainer.style.opacity = '0.3'; 
             presetsContainer.style.pointerEvents = 'none';
+
+            // Truque de usabilidade: força o carregamento do áudio após o clique do usuário
+            alarmSound.load(); 
 
             countdown = setInterval(() => {
                 if (totalSeconds <= 0) {
                     clearInterval(countdown);
                     updateDisplay(0);
-                    alarmSound.play();
+                    
+                    // 1. Toca o som primeiro
+                    alarmSound.play().catch(e => console.log("Audio play blocked: ", e));
                     resetTimerUI();
-                    alert("Time's up!");
+                    
+                    // 2. Espera 100 milissegundos para o som começar e só aí mostra o alerta
+                    setTimeout(() => {
+                        alert("Time's up!");
+                    }, 100);
+                    
                     return;
                 }
                 totalSeconds--;
                 updateDisplay(totalSeconds);
             }, 1000);
         }
+
 
         function pauseTimer() {
             clearInterval(countdown);
