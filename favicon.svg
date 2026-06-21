@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+
+    <!-- Corpo do cronômetro -->
+    <circle
+        cx="32"
+        cy="34"
+        r="28"
+        fill="none"
+        stroke="#3BBEFF"
+        stroke-width="4"
+        stroke-linecap="round"
+    />
+
+    <!-- Botão superior -->
+    <rect
+        x="28"
+        y="2"
+        width="8"
+        height="8"
+        rx="2"
+        fill="#3BBEFF"
+    />
+
+    <!-- Ponteiro único (45° para direita) -->
+    <line
+        x1="32"
+        y1="34"
+        x2="43"
+        y2="23"
+        stroke="#3BBEFF"
+        stroke-width="4"
+        stroke-linecap="round"
+    />
+
+    <!-- Centro -->
+    <circle
+        cx="32"
+        cy="34"
+        r="3"
+        fill="#3BBEFF"
+    />
+
+</svg>

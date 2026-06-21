@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Timer - Online Countdown Timer & Clock</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="description" content="The best free online countdown timer. Simple, fast, and full-screen timer for study, workouts, cooking, and productivity. Visit freetimer.net!">
+    <meta name="keywords" content="timer, countdown timer, online timer, free timer, pomodoro timer, online stopwatch, countdown clock">
+    <link rel="canonical" href="https://freetimer.net" />
+    
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --accent-color: #3b82f6;
+            --btn-bg: #1e293b;
+            --btn-hover: #334155;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color: var(--accent-color);
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .timer-display {
+            font-size: 5.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s;
+        }
+
+        .timer-display:hover {
+            transform: scale(1.03);
+            color: var(--accent-color);
+        }
+
+        .input-group {
+            display: none;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .input-group input {
+            width: 70px;
+            padding: 10px;
+            font-size: 1.5rem;
+            text-align: center;
+            border: 2px solid var(--btn-bg);
+            background: var(--btn-bg);
+            color: var(--text-color);
+            border-radius: 8px;
+        }
+
+        .presets {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-preset {
+            background-color: var(--btn-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 16px;
+            font-size: 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-preset:hover {
+            background-color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-main {
+            padding: 15px 35px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            min-width: 130px;
+        }
+
+        .btn-main:active {
+            transform: scale(0.98);
+        }
+
+        #btn-start { background-color: var(--accent-color); color: white; }
+        #btn-pause { background-color: #f59e0b; color: white; display: none; }
+        #btn-reset { background-color: var(--btn-bg); color: var(--text-color); }
+
+        .ads-placeholder {
+            width: 100%;
+            max-width: 728px;
+            height: 90px;
+            background-color: var(--btn-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            text-align: center;
+            max-width: 800px;
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 40px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .timer-display { font-size: 4rem; }
+            .btn-main { padding: 12px 25px; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Free Timer</h1>
+    </header>
+
+    <!-- TOP ADVERTISEMENT PLACEHOLDER -->
+    <div class="ads-placeholder">
+        <!-- Insert your Google Adsense code here once approved -->
+        Advertisement (Responsive / Top)
+    </div>
+
+    <main class="main-container">
+        <!-- Main display: click to manually set time -->
+        <div class="timer-display" id="display" title="Click to adjust time">00:05:00</div>
+
+        <!-- Manual time configuration inputs -->
+        <div class="input-group" id="inputs-config">
+            <input type="number" id="input-h" min="0" max="23" placeholder="HH" value="00">
+            <input type="number" id="input-m" min="0" max="59" placeholder="MM" value="05">
+            <input type="number" id="input-s" min="0" max="59" placeholder="SS" value="00">
+            <button class="btn-preset" id="btn-save-config">OK</button>
+        </div>
+
+        <!-- Usability quick presets (Popular timer searches) -->
+        <div class="presets" id="presets-container">
+            <button class="btn-preset" data-time="60">1 Min</button>
+            <button class="btn-preset" data-time="300">5 Min</button>
+            <button class="btn-preset" data-time="600">10 Min</button>
+            <button class="btn-preset" data-time="900">15 Min</button>
+            <button class="btn-preset" data-time="1500">25 Min (Pomodoro)</button>
+        </div>
+
+        <!-- Main timer execution controls -->
+        <div class="controls">
+            <button class="btn-main" id="btn-start">Start</button>
+            <button class="btn-main" id="btn-pause">Pause</button>
+            <button class="btn-main" id="btn-reset">Reset</button>
+        </div>
+    </main>
+
+    <!-- BOTTOM ADVERTISEMENT PLACEHOLDER -->
+    <div class="ads-placeholder">
+        Advertisement (Responsive / Bottom)
+    </div>
+
+    <!-- SEO Section - Essential for global Google ranking -->
+    <footer>
+        <h2>Free Online Countdown Timer - freetimer.net</h2>
+        <p><strong>Free Timer</strong> is your ultimate web-based countdown timer for everyday use. Built with a strict focus on extreme speed and fluid usability, it runs flawlessly on desktops, tablets, and smartphones. Perfect for managing your Pomodoro study sessions, tracking cooking time in the kitchen, or monitoring workout intervals.</p>
+        <p style="margin-top: 20px;">
+            <a href="privacy.html" style="color: #3b82f6; text-decoration: none;">Privacy Policy</a>
+        </p>
+    </footer>
+
+    <!-- Native audio element for the alarm sound -->
+    <audio id="alarm-sound" src="https://google.com" preload="auto"></audio>
+
+        <script>
+        let countdown;
+        let totalSeconds = 300; // Default initial time: 5 min (300s)
+        let initialSeconds = 300; // Stores configured value for resets
+        let isRunning = false;
+
+        const display = document.getElementById('display');
+        const inputsConfig = document.getElementById('inputs-config');
+        const presetsContainer = document.getElementById('presets-container');
+        const btnStart = document.getElementById('btn-start');
+        const btnPause = document.getElementById('btn-pause');
+        const btnReset = document.getElementById('btn-reset');
+        const alarmSound = document.getElementById('alarm-sound');
+
+        const inputH = document.getElementById('input-h');
+        const inputM = document.getElementById('input-m');
+        const inputS = document.getElementById('input-s');
+        const btnSaveConfig = document.getElementById('btn-save-config');
+
+        function updateDisplay(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            display.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            btnStart.style.display = 'none';
+            btnPause.style.display = 'inline-block';
+            presetsContainer.style.opacity = '0.3'; // Visually disable presets during countdown
+            presetsContainer.style.pointerEvents = 'none';
+
+            countdown = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(countdown);
+                    updateDisplay(0);
+                    alarmSound.play();
+                    resetTimerUI();
+                    alert("Time's up!");
+                    return;
+                }
+                totalSeconds--;
+                updateDisplay(totalSeconds);
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(countdown);
+            isRunning = false;
+            btnPause.style.display = 'none';
+            btnStart.style.display = 'inline-block';
+            btnStart.textContent = 'Resume';
+        }
+
+        function resetTimer() {
+            clearInterval(countdown);
+            isRunning = false;
+            totalSeconds = initialSeconds;
+            updateDisplay(totalSeconds);
+            resetTimerUI();
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+        }
+
+        function resetTimerUI() {
+            btnPause.style.display = 'none';
+            btnStart.style.display = 'inline-block';
+            btnStart.textContent = 'Start';
+            presetsContainer.style.opacity = '1';
+            presetsContainer.style.pointerEvents = 'auto';
+        }
+
+        // Main controls event listeners
+        btnStart.addEventListener('click', startTimer);
+        btnPause.addEventListener('click', pauseTimer);
+        btnReset.addEventListener('click', resetTimer);
+
+        // Quick presets event listeners
+        presetsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-preset')) {
+                const secs = parseInt(e.target.getAttribute('data-time'));
+                totalSeconds = secs;
+                initialSeconds = secs;
+                updateDisplay(totalSeconds);
+            }
+        });
+
+        // Click on large display switches to manual edit mode
+        display.addEventListener('click', () => {
+            if (isRunning) pauseTimer();
+            display.style.display = 'none';
+            inputsConfig.style.display = 'flex';
+            
+            // Populate inputs with current time state
+            inputH.value = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+            inputM.value = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+            inputS.value = String(totalSeconds % 60).padStart(2, '0');
+        });
+
+        // Save manual custom duration from inputs
+        btnSaveConfig.addEventListener('click', () => {
+            const h = parseInt(inputH.value) || 0;
+            const m = parseInt(inputM.value) || 0;
+            const s = parseInt(inputS.value) || 0;
+            
+            totalSeconds = (h * 3600) + (m * 60) + s;
+            initialSeconds = totalSeconds;
+            
+            updateDisplay(totalSeconds);
+            inputsConfig.style.display = 'none';
+            display.style.display = 'block';
+        });
+
+        // Initialize display state
+        updateDisplay(totalSeconds);
+    </script>
+</body>
+</html>
