@@ -223,12 +223,6 @@
         </p>
     </footer>
 
-    <!-- Native audio element for the alarm sound -->
-    <!-- <audio id="alarm-sound" src="https://google.com" preload="auto"></audio> -->
-     
-    <!-- Substitua a linha antiga do <audio> por esta atualizada -->
-    <audio id="alarm-sound" src="https://mixkit.co" preload="auto"></audio>
-
 
         <script>
         let countdown;
@@ -242,7 +236,7 @@
         const btnStart = document.getElementById('btn-start');
         const btnPause = document.getElementById('btn-pause');
         const btnReset = document.getElementById('btn-reset');
-        const alarmSound = document.getElementById('alarm-sound');
+        // const alarmSound = document.getElementById('alarm-sound');
 
         const inputH = document.getElementById('input-h');
         const inputM = document.getElementById('input-m');
@@ -255,6 +249,35 @@
             const s = seconds % 60;
             display.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
+
+// Nova função que gera um som de alarme digital cristalino via código puro
+        function playBeep() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Cria 3 bipes rápidos em sequência (padrão de alarme de relógio digital)
+                let time = audioCtx.currentTime;
+                [0, 0.3, 0.6].forEach(delay => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    
+                    osc.type = 'sine'; // Som senoidal limpo
+                    osc.frequency.setValueAtTime(880, time + delay); // Frequência do bipe (Nota Lá)
+                    
+                    gain.gain.setValueAtTime(0.5, time + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, time + delay + 0.2); // Efeito de fading rápido
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start(time + delay);
+                    osc.stop(time + delay + 0.2);
+                });
+            } catch (error) {
+                console.log("Audio API not supported or blocked: ", error);
+            }
+        }
+
 
        function startTimer() {
             if (isRunning) return;
@@ -272,10 +295,10 @@
                     clearInterval(countdown);
                     updateDisplay(0);
                     
-                    // 1. Toca o som primeiro
-                    alarmSound.play().catch(e => console.log("Audio play blocked: ", e));
+                    // 1. Executa o som gerado por código puro sem dependências externas!
+                    playBeep();
                     resetTimerUI();
-                    
+
                     // 2. Espera 100 milissegundos para o som começar e só aí mostra o alerta
                     setTimeout(() => {
                         alert("Time's up!");
